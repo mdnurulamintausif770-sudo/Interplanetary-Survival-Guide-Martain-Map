@@ -1032,7 +1032,13 @@ export default function App() {
   );
 
   return (
-    <div className="relative w-full min-h-screen lg:h-screen lg:h-[100dvh] overflow-hidden bg-[#03060c] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 select-none flex flex-col">
+    <div
+      className="relative w-full min-h-[100dvh] overflow-x-hidden lg:overflow-hidden bg-[#03060c] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 select-none flex flex-col"
+      style={{
+        overscrollBehaviorY: 'none',
+        overscrollBehavior: 'none'
+      }}
+    >
       {/* 1. TOP HEADER: Fluid, left-aligned, sticky header spanning top across zoom levels */}
       <Navbar
         userId={userId}
@@ -1067,7 +1073,8 @@ export default function App() {
         } flex flex-col lg:flex-row gap-2.5 sm:gap-3`}
         style={{
           WebkitOverflowScrolling: 'touch',
-          overscrollBehaviorY: 'contain'
+          overscrollBehaviorY: 'none',
+          overscrollBehavior: 'none'
         }}
       >
         {/* PRIMARY VIEWING AREA: Aggressive fixed breakout when in Fullscreen */}
@@ -1157,9 +1164,13 @@ export default function App() {
             className={`w-full ${
               isFullscreen
                 ? 'w-screen h-[100dvh] border-none rounded-none touch-none overscroll-none'
-                : 'h-[38vh] sm:h-[44vh] md:h-[48vh] min-h-[240px] sm:min-h-[300px] md:min-h-[360px] lg:h-auto lg:min-h-0 lg:flex-1 rounded-xl sm:rounded-2xl border border-cyan-500/30 touch-pan-y overscroll-contain'
+                : 'h-[38vh] sm:h-[44vh] md:h-[48vh] min-h-[240px] sm:min-h-[300px] md:min-h-[360px] lg:h-auto lg:min-h-0 lg:flex-1 rounded-xl sm:rounded-2xl border border-cyan-500/30 touch-pan-y overscroll-none'
             } overflow-hidden relative shadow-2xl bg-[#04060c] select-none`}
-            style={{ touchAction: isFullscreen ? 'none' : 'pan-y' }}
+            style={{
+              touchAction: isFullscreen ? 'none' : 'pan-y',
+              overscrollBehaviorY: 'none',
+              overscrollBehavior: 'none'
+            }}
           >
             {renderMapView()}
           </div>

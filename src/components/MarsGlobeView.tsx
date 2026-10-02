@@ -222,9 +222,15 @@ export const MarsGlobeView: React.FC<MarsGlobeViewProps> = ({
   return (
     <div
       className={`relative w-full h-full flex-1 min-h-[360px] lg:min-h-0 bg-[#03060c] rounded-xl border border-cyan-950/60 overflow-hidden shadow-2xl flex flex-col items-center justify-center select-none ${
-        isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-contain'
+        isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-none'
       }`}
-      style={{ touchAction: isFullscreen ? 'none' : 'pan-y', userSelect: 'none', WebkitUserSelect: 'none' }}
+      style={{
+        touchAction: isFullscreen ? 'none' : 'pan-y',
+        overscrollBehaviorY: 'none',
+        overscrollBehavior: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
+      }}
     >
       {/* Photorealistic Three.js 3D Mars Globe (No Satellites, Free OrbitControls) */}
       <RealisticMarsGlobe

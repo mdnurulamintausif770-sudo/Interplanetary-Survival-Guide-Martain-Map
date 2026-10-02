@@ -439,9 +439,15 @@ export const OrbitalIntelligenceView: React.FC<OrbitalIntelligenceViewProps> = (
       {/* 2. CENTRAL VIEW: 3D Mars Globe, Orbiting MRO Satellite, Radar Beam & Dynamic Sync */}
       <div
         className={`relative flex-1 w-full h-full min-h-0 overflow-hidden select-none ${
-          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-contain'
+          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-none'
         }`}
-        style={{ touchAction: isFullscreen ? 'none' : 'pan-y', userSelect: 'none', WebkitUserSelect: 'none' }}
+        style={{
+          touchAction: isFullscreen ? 'none' : 'pan-y',
+          overscrollBehaviorY: 'none',
+          overscrollBehavior: 'none',
+          userSelect: 'none',
+          WebkitUserSelect: 'none'
+        }}
       >
         <RealisticMarsGlobe
           mode="sar"

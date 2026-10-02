@@ -2439,9 +2439,13 @@ export const MarsGIS2DView: React.FC<MarsGIS2DViewProps> = ({
       className={`bg-[#05070d] select-none transition-all duration-200 ${
         isFullscreen
           ? 'fixed inset-0 z-50 w-screen h-screen overflow-hidden rounded-none border-0 touch-none overscroll-none'
-          : 'relative w-full h-full flex-1 min-h-[360px] lg:min-h-0 rounded-xl border border-cyan-950/60 overflow-hidden shadow-2xl flex flex-col touch-pan-y overscroll-contain'
+          : 'relative w-full h-full flex-1 min-h-[360px] lg:min-h-0 rounded-xl border border-cyan-950/60 overflow-hidden shadow-2xl flex flex-col touch-pan-y overscroll-none'
       }`}
-      style={{ touchAction: isFullscreen ? 'none' : 'pan-y' }}
+      style={{
+        touchAction: isFullscreen ? 'none' : 'pan-y',
+        overscrollBehaviorY: 'none',
+        overscrollBehavior: 'none'
+      }}
     >
       {/* Global 2D Canvas */}
       <canvas
@@ -2458,9 +2462,13 @@ export const MarsGIS2DView: React.FC<MarsGIS2DViewProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className={`absolute inset-0 w-full h-full block select-none ${
-          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-contain'
+          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-none'
         } ${clickMode === 'ANALYZE' ? 'cursor-crosshair' : 'cursor-pointer'}`}
-        style={{ touchAction: isFullscreen ? 'none' : 'pan-y' }}
+        style={{
+          touchAction: isFullscreen ? 'none' : 'pan-y',
+          overscrollBehaviorY: 'none',
+          overscrollBehavior: 'none'
+        }}
       />
 
       {/* Top-Left Dedicated Fullscreen Mode Toggle Button */}

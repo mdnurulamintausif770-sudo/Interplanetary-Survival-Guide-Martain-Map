@@ -635,6 +635,12 @@ export const RealisticMarsGlobe: React.FC<RealisticMarsGlobeProps> = ({
     controls.autoRotateSpeed = autoRotateSpeed ?? 0.8;
     controlsRef.current = controls;
 
+    // Explicitly configure touchAction on both renderer and controls domElement to allow vertical page scrolling
+    renderer.domElement.style.touchAction = isFullscreenRef.current ? 'none' : 'pan-y';
+    if (controls.domElement) {
+      controls.domElement.style.touchAction = isFullscreenRef.current ? 'none' : 'pan-y';
+    }
+
     const handleControlsChange = () => {
       setCameraVersion(v => (v + 1) % 1000000);
       if (onZoomChange && cameraRef.current) {
@@ -835,8 +841,19 @@ export const RealisticMarsGlobe: React.FC<RealisticMarsGlobeProps> = ({
         lastPinchDist = 0;
         lastTwoFingerCenter = null;
 
-        // When in fullscreen mode, CSS touch-action: none prevents scrolling;
-        // avoid blocking touchstart so mobile compositor scrolls smoothly when embedded
+        // When embedded (not in fullscreen mode), detect if initial touch is on the globe or outside
+        if (!isFullscreenRef.current && cameraRef.current && marsMeshRef.current) {
+          const rect = renderer.domElement.getBoundingClientRect();
+          const ndcX = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+          const ndcY = -(((e.touches[0].clientY - rect.top) / rect.height) * 2 - 1);
+          const raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), cameraRef.current);
+          const hits = raycaster.intersectObject(marsMeshRef.current, false);
+          if (hits.length === 0) {
+            // Touched outside the globe sphere: allow native page vertical scroll immediately
+            touchScrollIntent = 'vertical';
+          }
+        }
       } else if (e.touches.length >= 2) {
         // Two fingers: rotate + pinch zoom without page scroll
         isTouchDragging = true;
@@ -878,8 +895,8 @@ export const RealisticMarsGlobe: React.FC<RealisticMarsGlobeProps> = ({
             const totalDy = clientY - touchStartPos.y;
             const totalDist = Math.hypot(totalDx, totalDy);
 
-            if (touchScrollIntent === null && totalDist > 6) {
-              if (Math.abs(totalDy) >= Math.abs(totalDx)) {
+            if (touchScrollIntent === null && totalDist > 4) {
+              if (Math.abs(totalDy) >= Math.abs(totalDx) * 0.75) {
                 touchScrollIntent = 'vertical';
               } else {
                 touchScrollIntent = 'rotate';
@@ -1302,10 +1319,12 @@ export const RealisticMarsGlobe: React.FC<RealisticMarsGlobeProps> = ({
       <div
         ref={mountRef}
         className={`relative w-full h-full select-none cursor-grab active:cursor-grabbing overflow-hidden ${
-          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-contain'
+          isFullscreen ? 'touch-none overscroll-none' : 'touch-pan-y overscroll-none'
         } ${className}`}
         style={{
           touchAction: isFullscreen ? 'none' : 'pan-y',
+          overscrollBehaviorY: 'none',
+          overscrollBehavior: 'none',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none'
